@@ -5,8 +5,7 @@ import 'package:pokedex/theme/theme_provider.dart';
 import 'package:pokedex/util/get_pokemon_image.dart';
 import 'package:pokedex/util/pokemon_type.dart';
 import 'package:provider/provider.dart';
-
-import '../util/color_util.dart';
+import '../util/utils.dart';
 
 class PokemonInfo extends StatelessWidget {
   const PokemonInfo({super.key, required this.pokemon});
@@ -15,17 +14,28 @@ class PokemonInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.symmetric(vertical: 40),
-      children: [
-        TypesDetails(type: pokemon.types),
-        const SizedBox(height: 24),
-        Details(details: pokemon),
-        EvolutionLine(
-          evolution: pokemon.evolutionChainIds!,
-          colorType: pokemon.primaryType!.color,
-        ),
-      ],
+    return Padding(
+      padding: EdgeInsets.only(
+        top: 50,
+        bottom: MediaQueryData.fromView(View.of(context)).padding.bottom,
+      ),
+      child: Column(
+        children: [
+          TypesDetails(type: pokemon.types),
+          const SizedBox(height: 32),
+          Details(details: pokemon),
+          const SizedBox(height: 32),
+          EvolutionLine(
+            evolution: pokemon.evolutionChainIds!,
+            colorType: pokemon.primaryType!.color,
+          ),
+          const SizedBox(height: 32),
+          Abilities(
+            abilities: pokemon.abilities,
+            colorType: pokemon.primaryType!.color,
+          ),
+        ],
+      ),
     );
   }
 }
@@ -93,7 +103,7 @@ class Details extends StatelessWidget {
         Column(
           children: [
             Text(
-              "${details.height}'",
+              "${formatToMeters(details.height!)} m",
               style: TextStyle(
                 fontFamily: GoogleFonts.montserrat().fontFamily,
                 fontSize: 18,
@@ -111,7 +121,7 @@ class Details extends StatelessWidget {
         Column(
           children: [
             Text(
-              "${details.weight} lbs",
+              "${formatToKg(details.weight!)} kg",
               style: TextStyle(
                 fontFamily: GoogleFonts.montserrat().fontFamily,
                 fontSize: 18,
@@ -145,11 +155,10 @@ class EvolutionLine extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const SizedBox(height: 24),
         Text(
           "Evolution Chain",
           style: TextStyle(
-            fontSize: 16,
+            fontSize: 24,
             fontWeight: FontWeight.bold,
             color: colorType,
             fontFamily: GoogleFonts.montserrat().fontFamily,
@@ -166,21 +175,7 @@ class EvolutionLine extends StatelessWidget {
               children: [
                 for (var i = 0; i < evolution.length; i++) ...[
                   // Pokemon column
-                  Column(
-                    children: [
-                      getPokemonImage(id: evolution[i], dimensione: 60),
-                      Text(
-                        evolution[i] < 100
-                            ? "#0${evolution[i].toString()}"
-                            : "#${evolution[i]}",
-                        style: TextStyle(
-                          fontSize: 15,
-                          color: ColorUtil().lightGrey,
-                          fontFamily: GoogleFonts.montserrat().fontFamily,
-                        ),
-                      ),
-                    ],
-                  ),
+                  getPokemonImage(id: evolution[i], dimensione: 80),
                   // Add arrow between Pokemon, but not after the last one
                   if (i < evolution.length - 1)
                     Padding(
@@ -191,6 +186,92 @@ class EvolutionLine extends StatelessWidget {
               ],
             ),
           ),
+        ),
+      ],
+    );
+  }
+}
+
+class Abilities extends StatelessWidget {
+  const Abilities({
+    super.key,
+    required this.abilities,
+    required this.colorType,
+  });
+
+  final Color colorType;
+
+  final List<Ability> abilities;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text(
+          "Abilities",
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: colorType,
+            fontFamily: GoogleFonts.montserrat().fontFamily,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Text(
+                  "First Ability",
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                    fontFamily: GoogleFonts.montserrat().fontFamily,
+                  ),
+                ),
+                Text(
+                  abilities[0].name.capitalize(),
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                    fontFamily: GoogleFonts.montserrat().fontFamily,
+                  ),
+                ),
+              ],
+            ),
+
+            if (abilities.length > 1) ...{
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Text(
+                    "Special Ability",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                      fontFamily: GoogleFonts.montserrat().fontFamily,
+                    ),
+                  ),
+                  Text(
+                    abilities[1].name.capitalize(),
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                      fontFamily: GoogleFonts.montserrat().fontFamily,
+                    ),
+                  ),
+                ],
+              ),
+            },
+          ],
         ),
       ],
     );

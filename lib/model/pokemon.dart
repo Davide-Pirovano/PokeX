@@ -8,8 +8,8 @@ class Pokemon {
   final List<TypeEntry> types;
   final PokemonSpecies? species;
   final String url;
-  poketype_util.PokemonType?
-  primaryType; // Using the util version, not the model class
+  final List<Ability> abilities;
+  poketype_util.PokemonType? primaryType;
   List<int>? evolutionChainIds;
 
   Pokemon({
@@ -22,6 +22,7 @@ class Pokemon {
     required this.url,
     this.primaryType,
     this.evolutionChainIds,
+    this.abilities = const [],
   });
 
   factory Pokemon.fromJson(Map<String, dynamic> json) {
@@ -39,6 +40,14 @@ class Pokemon {
       speciesData = PokemonSpecies.fromJson(json["species"]);
     }
 
+    // Parse abilities if available
+    List<Ability> abilitiesList = [];
+    if (json.containsKey("abilities") && json["abilities"] is List) {
+      abilitiesList = List<Ability>.from(
+        json["abilities"].map((x) => Ability.fromJson(x["ability"])),
+      );
+    }
+
     // Create the Pokemon object
     Pokemon pokemon = Pokemon(
       id: json["id"],
@@ -48,6 +57,7 @@ class Pokemon {
       types: typesList,
       species: speciesData,
       url: json["url"] ?? "",
+      abilities: abilitiesList,
     );
 
     // Set the primary type if types are available
@@ -74,6 +84,7 @@ class Pokemon {
     "species": species?.toJson(),
     "url": url,
     "evolutionChainIds": evolutionChainIds,
+    "abilities": abilities.map((ability) => ability.toJson()).toList(),
   };
 }
 
@@ -112,6 +123,19 @@ class PokemonSpecies {
 
   factory PokemonSpecies.fromJson(Map<String, dynamic> json) {
     return PokemonSpecies(name: json["name"], url: json["url"]);
+  }
+
+  Map<String, dynamic> toJson() => {"name": name, "url": url};
+}
+
+class Ability {
+  final String name;
+  final String url;
+
+  Ability({required this.name, required this.url});
+
+  factory Ability.fromJson(Map<String, dynamic> json) {
+    return Ability(name: json["name"], url: json["url"]);
   }
 
   Map<String, dynamic> toJson() => {"name": name, "url": url};

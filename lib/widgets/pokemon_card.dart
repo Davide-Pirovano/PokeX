@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pokedex/model/pokemon.dart';
 import 'package:pokedex/util/color_util.dart';
-import 'package:pokedex/util/string_capitalize.dart';
+import 'package:pokedex/util/utils.dart';
 import '../pages/pokemon_details_page.dart';
 import '../util/get_pokemon_image.dart';
 
