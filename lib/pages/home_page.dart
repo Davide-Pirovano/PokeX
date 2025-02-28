@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:pokedex/widgets/app_bar_title.dart';
 import 'package:provider/provider.dart';
 
 import '../data/pokedex_data_source.dart';
@@ -49,16 +49,7 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.transparent,
-        title: Center(
-          child: Text(
-            "Pokedex",
-            style: TextStyle(
-              fontFamily: GoogleFonts.montserrat().fontFamily,
-              fontSize: 30,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
+        title: AppBarTitle(title: "Pokédex"),
         actions: [
           IconButton(
             onPressed: () {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pokedex/widgets/app_bar_title.dart';
 import 'package:provider/provider.dart';
 
 import '../repo/favourite_repo.dart';
@@ -10,7 +11,7 @@ class FavouritesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Favourites")),
+      appBar: AppBar(title: AppBarTitle(title: "Favourites")),
       body: Consumer<FavouriteRepo>(
         builder: (context, favouriteRepo, child) {
           return CustomScrollView(
