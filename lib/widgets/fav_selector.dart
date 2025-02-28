@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hive_ce/hive.dart';
 import 'package:provider/provider.dart';
 
 import '../model/pokemon.dart';
