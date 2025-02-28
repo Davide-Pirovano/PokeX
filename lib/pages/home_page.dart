@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../data/pokedex_data_source.dart';
 import '../widgets/pokemon_card.dart';
+import 'favourites_page.dart';
 import 'settings_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -67,6 +68,15 @@ class _HomePageState extends State<HomePage> {
               );
             },
             icon: const Icon(Icons.settings),
+          ),
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const FavouritesPage()),
+              );
+            },
+            icon: const Icon(Icons.favorite),
           ),
         ],
         titleSpacing: 0,

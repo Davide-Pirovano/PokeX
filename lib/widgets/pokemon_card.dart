@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:pokedex/model/pokemon.dart';
 import 'package:pokedex/util/color_util.dart';
 import 'package:pokedex/util/utils.dart';
+import 'package:pokedex/widgets/fav_selector.dart';
 import '../pages/pokemon_details_page.dart';
 import '../util/get_pokemon_image.dart';
 
@@ -45,6 +46,11 @@ class PokemonCard extends StatelessWidget {
                     fontFamily: GoogleFonts.montserrat().fontFamily,
                   ),
                 ),
+              ),
+              Positioned(
+                top: 8,
+                right: 8,
+                child: FavSelector(pokemon: pokemon),
               ),
               Center(
                 child: Column(

@@ -1,15 +1,38 @@
+import 'package:hive_ce/hive.dart';
 import 'package:pokedex/util/pokemon_type.dart' as poketype_util;
 
-class Pokemon {
+part 'pokemon.g.dart'; // flutter pub run build_runner build
+
+@HiveType(typeId: 0)
+class Pokemon extends HiveObject {
+  @HiveField(0)
   final int? id;
+
+  @HiveField(1)
   final String name;
+
+  @HiveField(2)
   final int? height;
+
+  @HiveField(3)
   final int? weight;
+
+  @HiveField(4)
   final List<TypeEntry> types;
+
+  @HiveField(5)
   final PokemonSpecies? species;
+
+  @HiveField(6)
   final String url;
+
+  @HiveField(7)
   final List<Ability> abilities;
+
+  @HiveField(8)
   poketype_util.PokemonType? primaryType;
+
+  @HiveField(9)
   List<int>? evolutionChainIds;
 
   Pokemon({
@@ -26,7 +49,6 @@ class Pokemon {
   });
 
   factory Pokemon.fromJson(Map<String, dynamic> json) {
-    // Parse types if available
     List<TypeEntry> typesList = [];
     if (json.containsKey("types") && json["types"] != null) {
       typesList = List<TypeEntry>.from(
@@ -34,13 +56,11 @@ class Pokemon {
       );
     }
 
-    // Parse species if available
     PokemonSpecies? speciesData;
     if (json.containsKey("species") && json["species"] != null) {
       speciesData = PokemonSpecies.fromJson(json["species"]);
     }
 
-    // Parse abilities if available
     List<Ability> abilitiesList = [];
     if (json.containsKey("abilities") && json["abilities"] is List) {
       abilitiesList = List<Ability>.from(
@@ -48,7 +68,6 @@ class Pokemon {
       );
     }
 
-    // Create the Pokemon object
     Pokemon pokemon = Pokemon(
       id: json["id"],
       name: json["name"],
@@ -60,7 +79,6 @@ class Pokemon {
       abilities: abilitiesList,
     );
 
-    // Set the primary type if types are available
     if (typesList.isNotEmpty) {
       pokemon.primaryType = poketype_util.getPokemonTypeFromString(
         typesList.first.type.name.toUpperCase(),
@@ -70,7 +88,6 @@ class Pokemon {
     return pokemon;
   }
 
-  // For creating Pokemon from list results
   factory Pokemon.fromListResult(Map<String, dynamic> json) {
     return Pokemon(name: json["name"], url: json["url"]);
   }
@@ -88,9 +105,12 @@ class Pokemon {
   };
 }
 
-// Renamed from PokemonType to TypeEntry to avoid conflict
+@HiveType(typeId: 1)
 class TypeEntry {
+  @HiveField(0)
   final int slot;
+
+  @HiveField(1)
   final TypeInfo type;
 
   TypeEntry({required this.slot, required this.type});
@@ -102,8 +122,12 @@ class TypeEntry {
   Map<String, dynamic> toJson() => {"slot": slot, "type": type.toJson()};
 }
 
+@HiveType(typeId: 2)
 class TypeInfo {
+  @HiveField(0)
   final String name;
+
+  @HiveField(1)
   final String url;
 
   TypeInfo({required this.name, required this.url});
@@ -115,8 +139,12 @@ class TypeInfo {
   Map<String, dynamic> toJson() => {"name": name, "url": url};
 }
 
+@HiveType(typeId: 3)
 class PokemonSpecies {
+  @HiveField(0)
   final String name;
+
+  @HiveField(1)
   final String url;
 
   PokemonSpecies({required this.name, required this.url});
@@ -128,8 +156,12 @@ class PokemonSpecies {
   Map<String, dynamic> toJson() => {"name": name, "url": url};
 }
 
+@HiveType(typeId: 4)
 class Ability {
+  @HiveField(0)
   final String name;
+
+  @HiveField(1)
   final String url;
 
   Ability({required this.name, required this.url});

@@ -1,3 +1,4 @@
+import 'package:hive_ce/hive.dart';
 import 'dart:ui';
 
 enum PokemonType {
@@ -23,6 +24,22 @@ enum PokemonType {
   final Color color;
 
   const PokemonType(this.color);
+}
+
+class PokemonTypeAdapter extends TypeAdapter<PokemonType> {
+  @override
+  final typeId = 5;
+
+  @override
+  PokemonType read(BinaryReader reader) {
+    final index = reader.readInt();
+    return PokemonType.values[index];
+  }
+
+  @override
+  void write(BinaryWriter writer, PokemonType obj) {
+    writer.writeInt(obj.index); // Salviamo l'indice dell'enum
+  }
 }
 
 PokemonType? getPokemonTypeFromString(String type) {

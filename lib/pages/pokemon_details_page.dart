@@ -4,6 +4,7 @@ import 'package:pokedex/model/pokemon.dart';
 import 'package:pokedex/util/color_util.dart';
 import 'package:pokedex/util/get_pokemon_image.dart';
 import 'package:pokedex/util/utils.dart';
+import 'package:pokedex/widgets/fav_selector.dart';
 
 import '../widgets/pokemon_details_banner.dart';
 
@@ -17,7 +18,10 @@ class PokemonDetailsPage extends StatefulWidget {
 }
 
 class _PokemonDetailsPageState extends State<PokemonDetailsPage> {
-  bool isFavourite = false;
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,9 +33,7 @@ class _PokemonDetailsPageState extends State<PokemonDetailsPage> {
         children: [
           /// **AppBar fissa**
           Container(
-            padding: EdgeInsets.only(
-              top: MediaQueryData.fromView(View.of(context)).padding.top,
-            ),
+            padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
             color: backgroundColor,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
@@ -51,24 +53,7 @@ class _PokemonDetailsPageState extends State<PokemonDetailsPage> {
                         constraints: const BoxConstraints(),
                         splashRadius: 24,
                       ),
-                      IconButton(
-                        onPressed: () {
-                          setState(() {
-                            isFavourite = !isFavourite;
-                          });
-                        },
-                        icon: Icon(
-                          isFavourite ? Icons.favorite : Icons.favorite_border,
-                          size: 32,
-                          color:
-                              isFavourite
-                                  ? ColorUtil().favouriteRed
-                                  : Colors.black,
-                        ),
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
-                        splashRadius: 24,
-                      ),
+                      FavSelector(pokemon: widget.pokemon),
                     ],
                   ),
 
