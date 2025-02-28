@@ -81,10 +81,10 @@ class PokedexDataSource extends ChangeNotifier {
 
       // Get evolution chain data
       if (detailedPokemon.species != null) {
-        final evolutionIds = await _getPokemonEvolutionChain(
+        final evolutionChains = await _getPokemonEvolutionChain(
           detailedPokemon.species!.url,
         );
-        detailedPokemon.evolutionChainIds = evolutionIds;
+        detailedPokemon.evolutionChainIds = evolutionChains;
       }
 
       return detailedPokemon;
@@ -104,7 +104,7 @@ class PokedexDataSource extends ChangeNotifier {
     }
   }
 
-  Future<List<int>> _getPokemonEvolutionChain(String speciesUrl) async {
+  Future<List<List<int>>> _getPokemonEvolutionChain(String speciesUrl) async {
     try {
       // First get the species data to find the evolution chain URL
       final speciesResponse = await http.get(Uri.parse(speciesUrl));
@@ -129,8 +129,8 @@ class PokedexDataSource extends ChangeNotifier {
     }
   }
 
-  List<int> _extractEvolutionChain(Map<String, dynamic> chain) {
-    List<int> evolutionIds = [];
+  List<List<int>> _extractEvolutionChain(Map<String, dynamic> chain) {
+    List<List<int>> evolutionChains = [];
 
     // Helper function to extract ID from URL
     int extractId(String url) {
@@ -138,21 +138,25 @@ class PokedexDataSource extends ChangeNotifier {
       return int.parse(parts[parts.length - 2]);
     }
 
-    // Add the first Pokemon
-    evolutionIds.add(extractId(chain['species']['url']));
+    // Function to recursively build evolution chains
+    void buildChains(Map<String, dynamic> currentChain, List<int> currentPath) {
+      // Add the current Pokemon to the path
+      currentPath.add(extractId(currentChain['species']['url']));
 
-    // Process evolution chain recursively
-    void processChain(Map<String, dynamic> currentChain) {
-      final evolvesTo = currentChain['evolves_to'];
-      if (evolvesTo != null && evolvesTo.isNotEmpty) {
-        for (var evolution in evolvesTo) {
-          evolutionIds.add(extractId(evolution['species']['url']));
-          processChain(evolution);
+      // If there are no further evolutions, add the current path to the list of chains
+      if (currentChain['evolves_to'] == null ||
+          currentChain['evolves_to'].isEmpty) {
+        evolutionChains.add(List.from(currentPath));
+      } else {
+        // Otherwise, recursively process each possible evolution
+        for (var evolution in currentChain['evolves_to']) {
+          buildChains(evolution, List.from(currentPath));
         }
       }
     }
 
-    processChain(chain);
-    return evolutionIds;
+    // Start building chains from the initial Pokemon
+    buildChains(chain, []);
+    return evolutionChains;
   }
 }

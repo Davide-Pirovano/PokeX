@@ -148,7 +148,7 @@ class EvolutionLine extends StatelessWidget {
     required this.colorType,
   });
 
-  final List<int> evolution;
+  final List<List<int>> evolution;
   final Color colorType;
 
   @override
@@ -156,7 +156,7 @@ class EvolutionLine extends StatelessWidget {
     return Column(
       children: [
         Text(
-          "Evolution Chain",
+          evolution.length > 1 ? "Evolution Chains" : "Evolution Chain",
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
@@ -170,18 +170,40 @@ class EvolutionLine extends StatelessWidget {
           child: SingleChildScrollView(
             scrollDirection:
                 Axis.horizontal, // Abilita lo scorrimento orizzontale
-            child: Row(
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 for (var i = 0; i < evolution.length; i++) ...[
                   // Pokemon column
-                  getPokemonImage(id: evolution[i], dimensione: 80),
-                  // Add arrow between Pokemon, but not after the last one
-                  if (i < evolution.length - 1)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Icon(Icons.arrow_forward, color: Colors.grey),
-                    ),
+                  Row(
+                    children: [
+                      Text(
+                        "[${i + 1}]",
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontFamily: GoogleFonts.montserrat().fontFamily,
+                          fontSize: 16,
+                        ),
+                      ),
+                      const SizedBox(width: 24),
+                      for (var j = 0; j < evolution[i].length; j++) ...[
+                        getPokemonImage(id: evolution[i][j], dimensione: 80),
+                        const SizedBox(width: 8),
+                        if (j < evolution[i].length - 1)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8.0,
+                            ),
+                            child: Icon(
+                              Icons.arrow_forward,
+                              color: Colors.grey,
+                            ),
+                          ),
+                      ],
+                    ],
+                  ),
+
+                  const SizedBox(width: 8),
                 ],
               ],
             ),

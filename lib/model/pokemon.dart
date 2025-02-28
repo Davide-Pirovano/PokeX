@@ -33,7 +33,7 @@ class Pokemon extends HiveObject {
   poketype_util.PokemonType? primaryType;
 
   @HiveField(9)
-  List<int>? evolutionChainIds;
+  List<List<int>>? evolutionChainIds; // Cambiato in List<List<int>>
 
   Pokemon({
     this.id,

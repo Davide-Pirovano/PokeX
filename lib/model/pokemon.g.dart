@@ -26,7 +26,7 @@ class PokemonAdapter extends TypeAdapter<Pokemon> {
       species: fields[5] as PokemonSpecies?,
       url: fields[6] as String,
       primaryType: fields[8] as poketype_util.PokemonType?,
-      evolutionChainIds: (fields[9] as List?)?.cast<int>(),
+      evolutionChainIds: (fields[9] as List?)?.cast<List<int>>(),
       abilities:
           fields[7] == null ? const [] : (fields[7] as List).cast<Ability>(),
     );
