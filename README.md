@@ -1,3 +1,2 @@
-# pokedex
-
-A new Flutter project.
+# PokeX
+Pokemon Pokedex
