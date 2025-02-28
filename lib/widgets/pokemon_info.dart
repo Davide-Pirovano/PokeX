@@ -6,6 +6,8 @@ import 'package:pokedex/util/get_pokemon_image.dart';
 import 'package:pokedex/util/pokemon_type.dart';
 import 'package:provider/provider.dart';
 
+import '../util/color_util.dart';
+
 class PokemonInfo extends StatelessWidget {
   const PokemonInfo({super.key, required this.pokemon});
 
@@ -13,16 +15,17 @@ class PokemonInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          const SizedBox(height: 40),
-          TypesDetails(type: pokemon.types),
-          const SizedBox(height: 24),
-          Details(details: pokemon),
-          EvolutionLine(evolution: pokemon.evolutionChainIds!),
-        ],
-      ),
+    return ListView(
+      padding: const EdgeInsets.symmetric(vertical: 40),
+      children: [
+        TypesDetails(type: pokemon.types),
+        const SizedBox(height: 24),
+        Details(details: pokemon),
+        EvolutionLine(
+          evolution: pokemon.evolutionChainIds!,
+          colorType: pokemon.primaryType!.color,
+        ),
+      ],
     );
   }
 }
@@ -129,26 +132,66 @@ class Details extends StatelessWidget {
 }
 
 class EvolutionLine extends StatelessWidget {
-  const EvolutionLine({super.key, required this.evolution});
+  const EvolutionLine({
+    super.key,
+    required this.evolution,
+    required this.colorType,
+  });
 
   final List<int> evolution;
+  final Color colorType;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+    return Column(
       children: [
-        for (var i = 0; i < evolution.length; i++)
-          Row(
-            children: [
-              Column(
-                children: [
-                  getPokemonImage(id: evolution[i]),
-                  Text(evolution[i].toString()),
-                ],
-              ),
-            ],
+        const SizedBox(height: 24),
+        Text(
+          "Evolution Chain",
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: colorType,
+            fontFamily: GoogleFonts.montserrat().fontFamily,
           ),
+        ),
+        const SizedBox(height: 8),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32.0),
+          child: SingleChildScrollView(
+            scrollDirection:
+                Axis.horizontal, // Abilita lo scorrimento orizzontale
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                for (var i = 0; i < evolution.length; i++) ...[
+                  // Pokemon column
+                  Column(
+                    children: [
+                      getPokemonImage(id: evolution[i], dimensione: 60),
+                      Text(
+                        evolution[i] < 100
+                            ? "#0${evolution[i].toString()}"
+                            : "#${evolution[i]}",
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: ColorUtil().lightGrey,
+                          fontFamily: GoogleFonts.montserrat().fontFamily,
+                        ),
+                      ),
+                    ],
+                  ),
+                  // Add arrow between Pokemon, but not after the last one
+                  if (i < evolution.length - 1)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Icon(Icons.arrow_forward, color: Colors.grey),
+                    ),
+                ],
+              ],
+            ),
+          ),
+        ),
       ],
     );
   }

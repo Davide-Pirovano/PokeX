@@ -29,7 +29,7 @@ class _HomePageState extends State<HomePage> {
 
   void _scrollListener() {
     if (_scrollController.position.pixels >=
-        _scrollController.position.maxScrollExtent * 0.9) {
+        _scrollController.position.maxScrollExtent * 0.6) {
       Provider.of<PokedexDataSource>(context, listen: false).fetchPokedex();
     }
   }
@@ -84,27 +84,33 @@ class _HomePageState extends State<HomePage> {
             child: Column(
               children: [
                 Expanded(
-                  child: GridView.builder(
+                  child: CustomScrollView(
                     controller: _scrollController,
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          childAspectRatio: 1,
+                    slivers: [
+                      SliverGrid(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              childAspectRatio: 1,
+                            ),
+                        delegate: SliverChildBuilderDelegate(
+                          (context, index) => PokemonCard(
+                            pokemon: dataSource.pokedex.results[index],
+                          ),
+                          childCount: dataSource.pokedex.results.length,
                         ),
-                    itemCount: dataSource.pokedex.results.length,
-                    itemBuilder:
-                        (context, index) => PokemonCard(
-                          pokemon: dataSource.pokedex.results[index],
+                      ),
+                      if (dataSource.isLoading)
+                        SliverToBoxAdapter(
+                          child: Container(
+                            padding: const EdgeInsets.all(16.0),
+                            alignment: Alignment.center,
+                            child: const CircularProgressIndicator(),
+                          ),
                         ),
+                    ],
                   ),
                 ),
-
-                // Mostra un indicatore di caricamento se stiamo caricando più Pokemon
-                if (dataSource.isLoading)
-                  const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: CircularProgressIndicator(),
-                  ),
               ],
             ),
           );
