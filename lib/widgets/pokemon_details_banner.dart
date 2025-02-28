@@ -14,7 +14,9 @@ class PokemonDetailsBanner extends StatelessWidget {
       clipper: InwardCurveClipper(), // Applica il ritaglio con la curva
       child: Container(
         width: double.infinity,
-        decoration: const BoxDecoration(color: Colors.white),
+        decoration: BoxDecoration(
+          color: Theme.of(context).scaffoldBackgroundColor,
+        ),
         child: PokemonInfo(pokemon: pokemon),
       ),
     );

@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:pokedex/model/pokemon.dart';
+import 'package:pokedex/util/color_util.dart';
+import 'package:pokedex/util/string_capitalize.dart';
 import '../pages/pokemon_details_page.dart';
-import '../util/string_capitalize.dart';
-
-import '../model/pokemon_preview.dart';
 import '../util/get_pokemon_image.dart';
 
 class PokemonCard extends StatelessWidget {
   const PokemonCard({super.key, required this.pokemon});
 
-  final PokemonPreview pokemon;
+  final Pokemon pokemon;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +25,7 @@ class PokemonCard extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Card(
-          color: pokemon.type?.color ?? Colors.white,
+          color: pokemon.primaryType?.color ?? Colors.white,
           elevation: 4,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
@@ -36,12 +36,12 @@ class PokemonCard extends StatelessWidget {
                 top: 8,
                 left: 8,
                 child: Text(
-                  pokemon.pokemon!.id! < 100
-                      ? "#0${pokemon.pokemon!.id.toString()}"
-                      : "#${pokemon.pokemon!.id}",
+                  pokemon.id! < 100
+                      ? "#0${pokemon.id.toString()}"
+                      : "#${pokemon.id}",
                   style: TextStyle(
                     fontSize: 25,
-                    color: const Color.fromARGB(78, 0, 0, 0),
+                    color: ColorUtil().lightGrey,
                     fontFamily: GoogleFonts.montserrat().fontFamily,
                   ),
                 ),
@@ -51,9 +51,9 @@ class PokemonCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    getPokemonImage(url: pokemon.url, dimensione: 100),
+                    getPokemonImage(id: pokemon.id!, dimensione: 100),
                     Text(
-                      pokemon.name!.capitalize(),
+                      pokemon.name.capitalize(),
                       style: TextStyle(
                         fontSize: 20,
                         fontFamily: GoogleFonts.montserrat().fontFamily,

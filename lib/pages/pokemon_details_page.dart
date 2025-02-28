@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:pokedex/model/pokemon.dart';
+import 'package:pokedex/util/color_util.dart';
 import 'package:pokedex/util/get_pokemon_image.dart';
 import 'package:pokedex/util/string_capitalize.dart';
 
-import '../model/pokemon_preview.dart';
 import '../widgets/pokemon_details_banner.dart';
 
 class PokemonDetailsPage extends StatefulWidget {
   const PokemonDetailsPage({super.key, required this.pokemon});
 
-  final PokemonPreview pokemon;
+  final Pokemon pokemon;
 
   @override
   State<PokemonDetailsPage> createState() => _PokemonDetailsPageState();
@@ -20,7 +21,7 @@ class _PokemonDetailsPageState extends State<PokemonDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final backgroundColor = widget.pokemon.type?.color ?? Colors.white;
+    final backgroundColor = widget.pokemon.primaryType?.color ?? Colors.white;
 
     return Scaffold(
       appBar: null,
@@ -37,7 +38,11 @@ class _PokemonDetailsPageState extends State<PokemonDetailsPage> {
                 children: [
                   // Pulsante indietro
                   IconButton(
-                    icon: const Icon(Icons.arrow_back, size: 32),
+                    icon: const Icon(
+                      Icons.arrow_back,
+                      size: 32,
+                      color: Colors.black,
+                    ),
                     onPressed: () => Navigator.pop(context),
                     padding: EdgeInsets.zero,
                     constraints: const BoxConstraints(),
@@ -55,9 +60,7 @@ class _PokemonDetailsPageState extends State<PokemonDetailsPage> {
                       isFavourite ? Icons.favorite : Icons.favorite_border,
                       size: 32,
                       color:
-                          isFavourite
-                              ? const Color.fromARGB(255, 206, 96, 88)
-                              : Colors.black,
+                          isFavourite ? ColorUtil().favouriteRed : Colors.black,
                     ),
                     padding: EdgeInsets.zero,
                     constraints: const BoxConstraints(),
@@ -77,7 +80,7 @@ class _PokemonDetailsPageState extends State<PokemonDetailsPage> {
 class PokemonDetailsContent extends StatelessWidget {
   const PokemonDetailsContent({super.key, required this.pokemon});
 
-  final PokemonPreview pokemon;
+  final Pokemon pokemon;
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +91,7 @@ class PokemonDetailsContent extends StatelessWidget {
           child: Row(
             children: [
               Text(
-                pokemon.name!.capitalize(),
+                pokemon.name.capitalize(),
                 style: TextStyle(
                   fontSize: 30,
                   fontFamily: GoogleFonts.montserrat().fontFamily,
@@ -96,20 +99,20 @@ class PokemonDetailsContent extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               Text(
-                pokemon.pokemon!.id! < 100
-                    ? "#0${pokemon.pokemon!.id.toString()}"
-                    : "#${pokemon.pokemon!.id}",
+                pokemon.id! < 100
+                    ? "#0${pokemon.id.toString()}"
+                    : "#${pokemon.id}",
                 style: TextStyle(
                   fontSize: 30,
-                  color: const Color.fromARGB(78, 0, 0, 0),
+                  color: ColorUtil().lightGrey,
                   fontFamily: GoogleFonts.montserrat().fontFamily,
                 ),
               ),
             ],
           ),
         ),
-        getPokemonImage(url: pokemon.url, dimensione: 220),
-        Expanded(child: PokemonDetailsBanner(pokemon: pokemon.pokemon!)),
+        getPokemonImage(id: pokemon.id!, dimensione: 220),
+        Expanded(child: PokemonDetailsBanner(pokemon: pokemon)),
       ],
     );
   }

@@ -1,10 +1,8 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/widgets.dart';
-import 'package:pokedex/model/pokedex.dart';
 import 'package:http/http.dart' as http;
-import 'package:pokedex/util/pokemon_type.dart';
-
+import '../model/pokedex.dart';
 import '../model/pokemon.dart';
 
 class PokedexDataSource extends ChangeNotifier {
@@ -13,17 +11,19 @@ class PokedexDataSource extends ChangeNotifier {
 
   static const String _baseUrl = 'https://pokeapi.co/api/v2/pokemon/';
 
-  final Pokedex pokedex = Pokedex();
+  Pokedex _pokedex = Pokedex();
+  Pokedex get pokedex => _pokedex;
+
   bool isLoading = false;
   bool hasNext = true;
 
   Future<void> fetchPokedex() async {
     if (isLoading || !hasNext) {
-      return; // Evita chiamate multiple durante il caricamento
+      return; // Avoid multiple calls during loading
     }
 
     isLoading = true;
-    notifyListeners(); // Notifica lo stato di caricamento
+    notifyListeners(); // Notify loading state
 
     final uri = Uri.parse('$_baseUrl?limit=$limit&offset=$offset');
 
@@ -31,61 +31,128 @@ class PokedexDataSource extends ChangeNotifier {
       final response = await http.get(uri);
 
       if (response.statusCode == 200) {
-        Pokedex fetchedPokedex = Pokedex.fromJson(json.decode(response.body));
+        // Parse the basic list response
+        final json = jsonDecode(response.body);
+        final basicPokedex = Pokedex.fromJson(json);
 
-        // Assegna i valori di base
-        pokedex.count = fetchedPokedex.count;
-        pokedex.next = fetchedPokedex.next;
-        pokedex.previous = fetchedPokedex.previous;
+        // Update pagination data
+        _pokedex = Pokedex(
+          count: basicPokedex.count,
+          next: basicPokedex.next,
+          previous: basicPokedex.previous,
+          results: [..._pokedex.results], // Keep existing results
+        );
 
-        // Assicurati che `results` non sia null prima di aggiungere
-        if (fetchedPokedex.results != null) {
-          pokedex.results ??= [];
-          for (var i = 0; i < fetchedPokedex.results!.length; i++) {
-            // fetch pokemon type
-            fetchedPokedex.results![i].pokemon = await getPokemon(
-              Uri.parse(fetchedPokedex.results![i].url.toString()),
-            );
-
-            var type =
-                fetchedPokedex.results![i].pokemon?.types.first.type!.name!
-                    .toUpperCase();
-
-            // ottengo il colore del tipo da dall'util pokemon_type
-            final pokemonType = getPokemonTypeFromString(type!);
-            fetchedPokedex.results![i].type = pokemonType;
-
-            // add to pokedex
-            pokedex.results!.add(fetchedPokedex.results![i]);
-          }
+        // Fetch detailed data for each Pokemon
+        final List<Pokemon> detailedResults = [];
+        for (var basicPokemon in basicPokedex.results) {
+          final detailedPokemon = await _fetchPokemonDetails(basicPokemon);
+          detailedResults.add(detailedPokemon);
         }
 
-        // Aggiorna l'offset per la prossima chiamata
-        offset += limit;
-        hasNext = fetchedPokedex.next != null;
-      } else {
-        throw Exception(
-          'Errore nel caricamento del Pokédex: ${response.statusCode}',
+        // Add new results to existing results
+        _pokedex = Pokedex(
+          count: _pokedex.count,
+          next: _pokedex.next,
+          previous: _pokedex.previous,
+          results: [..._pokedex.results, ...detailedResults],
         );
+
+        // Update for next page
+        offset += limit;
+        hasNext = _pokedex.next != null;
+      } else {
+        throw Exception('Error loading Pokédex: ${response.statusCode}');
       }
     } catch (e) {
-      log('Errore durante il fetch: $e');
+      log('Error during fetch: $e');
     } finally {
       isLoading = false;
-      notifyListeners(); // Notifica che i dati sono pronti o che c'è stato un errore
+      notifyListeners(); // Notify that data is ready or there was an error
     }
   }
 
-  Future<Pokemon> getPokemon(Uri url) async {
-    // chiamo fetchPokemon e recupero il tipo
+  Future<Pokemon> _fetchPokemonDetails(Pokemon basicPokemon) async {
+    try {
+      // Get detailed Pokemon data
+      final detailedPokemon = await _getPokemonData(
+        Uri.parse(basicPokemon.url),
+      );
+
+      // Get evolution chain data
+      if (detailedPokemon.species != null) {
+        final evolutionIds = await _getPokemonEvolutionChain(
+          detailedPokemon.species!.url,
+        );
+        detailedPokemon.evolutionChainIds = evolutionIds;
+      }
+
+      return detailedPokemon;
+    } catch (e) {
+      log('Error fetching details for ${basicPokemon.name}: $e');
+      return basicPokemon; // Return basic data if detailed fetch fails
+    }
+  }
+
+  Future<Pokemon> _getPokemonData(Uri url) async {
     final response = await http.get(url);
     if (response.statusCode == 200) {
       final json = jsonDecode(response.body);
-
-      var pokemon = Pokemon.fromJson(json);
-      return pokemon;
+      return Pokemon.fromJson(json);
     } else {
-      throw Exception('Errore nel caricamento del Pokémon');
+      throw Exception('Error loading Pokémon data');
     }
+  }
+
+  Future<List<int>> _getPokemonEvolutionChain(String speciesUrl) async {
+    try {
+      // First get the species data to find the evolution chain URL
+      final speciesResponse = await http.get(Uri.parse(speciesUrl));
+      if (speciesResponse.statusCode != 200) {
+        throw Exception('Error loading Pokémon species data');
+      }
+
+      final speciesJson = jsonDecode(speciesResponse.body);
+      final evolutionChainUrl = speciesJson['evolution_chain']['url'];
+
+      // Now get the evolution chain
+      final evolutionResponse = await http.get(Uri.parse(evolutionChainUrl));
+      if (evolutionResponse.statusCode != 200) {
+        throw Exception('Error loading evolution chain data');
+      }
+
+      final evolutionJson = jsonDecode(evolutionResponse.body);
+      return _extractEvolutionChain(evolutionJson['chain']);
+    } catch (e) {
+      log('Error getting evolution chain: $e');
+      return [];
+    }
+  }
+
+  List<int> _extractEvolutionChain(Map<String, dynamic> chain) {
+    List<int> evolutionIds = [];
+
+    // Helper function to extract ID from URL
+    int extractId(String url) {
+      final parts = url.split('/');
+      return int.parse(parts[parts.length - 2]);
+    }
+
+    // Add the first Pokemon
+    evolutionIds.add(extractId(chain['species']['url']));
+
+    // Process evolution chain recursively
+    void processChain(Map<String, dynamic> currentChain) {
+      final evolvesTo = currentChain['evolves_to'];
+      if (evolvesTo != null && evolvesTo.isNotEmpty) {
+        for (var evolution in evolvesTo) {
+          evolutionIds.add(extractId(evolution['species']['url']));
+          processChain(evolution);
+        }
+      }
+    }
+
+    processChain(chain);
+    return evolutionIds;
   }
 }

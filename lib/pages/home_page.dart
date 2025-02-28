@@ -75,8 +75,7 @@ class _HomePageState extends State<HomePage> {
       body: Consumer<PokedexDataSource>(
         builder: (context, dataSource, child) {
           // Verifica se i dati sono stati caricati
-          if (dataSource.pokedex.results == null ||
-              dataSource.pokedex.results!.isEmpty) {
+          if (dataSource.pokedex.results.isEmpty) {
             return const Center(child: CircularProgressIndicator());
           }
 
@@ -92,10 +91,10 @@ class _HomePageState extends State<HomePage> {
                           crossAxisCount: 2,
                           childAspectRatio: 1,
                         ),
-                    itemCount: dataSource.pokedex.results!.length,
+                    itemCount: dataSource.pokedex.results.length,
                     itemBuilder:
                         (context, index) => PokemonCard(
-                          pokemon: dataSource.pokedex.results![index],
+                          pokemon: dataSource.pokedex.results[index],
                         ),
                   ),
                 ),
