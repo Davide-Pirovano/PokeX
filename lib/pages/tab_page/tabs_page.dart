@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:pokex/util/color_util.dart';
 import '../../pages/favourites_page.dart';
 import '../../pages/home_page.dart';
 import '../../pages/settings_page.dart';
@@ -34,9 +33,6 @@ class _TabsPageState extends State<TabsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
-    final activeColor = isDarkMode ? Colors.white : Colors.black;
-
     return PopScope(
       canPop: false, // Impedisce il pop del root navigator
       onPopInvokedWithResult: (didPop, _) {
@@ -47,7 +43,7 @@ class _TabsPageState extends State<TabsPage> {
         tabBar: CupertinoTabBar(
           height: 60,
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          activeColor: activeColor,
+          activeColor: Theme.of(context).colorScheme.primary,
           inactiveColor: Colors.grey,
           key: ctrl.tabKey,
           onTap: ctrl.goToTab,
@@ -65,9 +61,7 @@ class _TabsPageState extends State<TabsPage> {
                         width: 24,
                         color:
                             isActive
-                                ? Provider.of<ThemeProvider>(context).isDarkMode
-                                    ? Colors.white
-                                    : Colors.black
+                                ? Theme.of(context).colorScheme.primary
                                 : Colors.grey,
                       ),
                     ),

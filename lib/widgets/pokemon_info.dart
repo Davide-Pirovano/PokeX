@@ -230,10 +230,7 @@ class Abilities extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color:
-                        Provider.of<ThemeProvider>(context).isDarkMode
-                            ? Colors.white
-                            : Colors.black,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
                 Text(
@@ -241,10 +238,7 @@ class Abilities extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color:
-                        Provider.of<ThemeProvider>(context).isDarkMode
-                            ? Colors.white
-                            : Colors.black,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
               ],
@@ -260,10 +254,7 @@ class Abilities extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color:
-                          Provider.of<ThemeProvider>(context).isDarkMode
-                              ? Colors.white
-                              : Colors.black,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                   ),
                   Text(
@@ -271,10 +262,7 @@ class Abilities extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color:
-                          Provider.of<ThemeProvider>(context).isDarkMode
-                              ? Colors.white
-                              : Colors.black,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                   ),
                 ],
