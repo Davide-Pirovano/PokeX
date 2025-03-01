@@ -14,21 +14,18 @@ class PokemonInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(
-        top: 50,
-        bottom: MediaQueryData.fromView(View.of(context)).padding.bottom,
-      ),
+      padding: EdgeInsets.only(top: 40, bottom: 40),
       child: Column(
         children: [
           TypesDetails(type: pokemon.types),
-          const SizedBox(height: 32),
+          const SizedBox(height: 24),
           Details(details: pokemon),
-          const SizedBox(height: 32),
+          const SizedBox(height: 24),
           EvolutionLine(
             evolution: pokemon.evolutionChainIds!,
             colorType: pokemon.primaryType!.color,
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: 24),
           Abilities(
             abilities: pokemon.abilities,
             colorType: pokemon.primaryType!.color,
@@ -178,18 +175,10 @@ class EvolutionLine extends StatelessWidget {
                       ),
                       const SizedBox(width: 24),
                       for (var j = 0; j < evolution[i].length; j++) ...[
-                        getPokemonImage(id: evolution[i][j], dimensione: 65),
+                        getPokemonImage(id: evolution[i][j], dimensione: 55),
                         const SizedBox(width: 8),
                         if (j < evolution[i].length - 1)
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8.0,
-                            ),
-                            child: Icon(
-                              Icons.arrow_forward,
-                              color: Colors.grey,
-                            ),
-                          ),
+                          Icon(Icons.arrow_forward, color: Colors.grey),
                       ],
                     ],
                   ),
@@ -241,7 +230,10 @@ class Abilities extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black,
+                    color:
+                        Provider.of<ThemeProvider>(context).isDarkMode
+                            ? Colors.white
+                            : Colors.black,
                   ),
                 ),
                 Text(
@@ -249,7 +241,10 @@ class Abilities extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black,
+                    color:
+                        Provider.of<ThemeProvider>(context).isDarkMode
+                            ? Colors.white
+                            : Colors.black,
                   ),
                 ),
               ],
@@ -265,7 +260,10 @@ class Abilities extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black,
+                      color:
+                          Provider.of<ThemeProvider>(context).isDarkMode
+                              ? Colors.white
+                              : Colors.black,
                     ),
                   ),
                   Text(
@@ -273,7 +271,10 @@ class Abilities extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black,
+                      color:
+                          Provider.of<ThemeProvider>(context).isDarkMode
+                              ? Colors.white
+                              : Colors.black,
                     ),
                   ),
                 ],

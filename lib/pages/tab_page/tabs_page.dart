@@ -64,7 +64,11 @@ class _TabsPageState extends State<TabsPage> {
                         height: 24,
                         width: 24,
                         color:
-                            isActive ? ColorUtil().favouriteRed : Colors.grey,
+                            isActive
+                                ? Provider.of<ThemeProvider>(context).isDarkMode
+                                    ? Colors.white
+                                    : Colors.black
+                                : Colors.grey,
                       ),
                     ),
                   ),

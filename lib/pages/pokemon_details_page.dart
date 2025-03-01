@@ -98,12 +98,9 @@ class _PokemonDetailsPageState extends State<PokemonDetailsPage> {
                     Center(
                       child: getPokemonImage(
                         id: widget.pokemon.id!,
-                        dimensione: 220,
+                        dimensione: 200,
                       ),
                     ),
-
-                    const SizedBox(height: 16),
-
                     // Banner con le info
                     PokemonDetailsBanner(pokemon: widget.pokemon),
                   ],
