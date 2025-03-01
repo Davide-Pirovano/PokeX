@@ -77,7 +77,7 @@ class _TabsPageState extends State<TabsPage> {
                 case 1:
                   return const FavouritesPage();
                 case 2:
-                  return const SettingsPage();
+                  return SettingsPage();
                 default:
                   return const HomePage();
               }

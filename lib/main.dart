@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:hive_ce_flutter/adapters.dart';
+import 'package:pokex/pages/auth/auth_gate.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../pages/tab_page/tabs_page.dart';
 import 'package:provider/provider.dart';
 
 import 'data/favourites_data_source.dart';
@@ -57,7 +57,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: TabsPage(),
+      home: AuthGate(),
       debugShowCheckedModeBanner: false,
       theme: Provider.of<ThemeProvider>(context).themeData,
     );
