@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:pokedex/model/pokemon.dart';
 import 'package:pokedex/util/color_util.dart';
 import 'package:pokedex/util/get_pokemon_image.dart';

@@ -48,8 +48,6 @@ class _HomePageState extends State<HomePage> {
         elevation: 0,
         backgroundColor: Colors.transparent,
         title: AppBarTitle(title: "Pokédex"),
-        titleSpacing: 0,
-        toolbarHeight: 80,
       ),
       body: Consumer<PokedexDataSource>(
         builder: (context, dataSource, child) {
