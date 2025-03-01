@@ -58,12 +58,11 @@ class _TabsPageState extends State<TabsPage> {
                     ctrl.tabController.index == ctrl.navPages.indexOf(p);
                 return BottomNavigationBarItem(
                   icon: SizedBox(
-                    height: 60,
                     child: Center(
                       child: Image.asset(
                         p.icon,
-                        height: 32,
-                        width: 32,
+                        height: 24,
+                        width: 24,
                         color:
                             isActive ? ColorUtil().favouriteRed : Colors.grey,
                       ),

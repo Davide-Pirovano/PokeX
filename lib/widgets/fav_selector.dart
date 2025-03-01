@@ -29,8 +29,8 @@ class FavSelector extends StatelessWidget {
                         : favouriteRepo.addFavourite(pokemon),
             icon: Image.asset(
               isFav ? heartFullIcon : heartIcon,
-              height: 32, // Dimensione coerente con il tuo design
-              width: 32,
+              height: 24, // Dimensione coerente con il tuo design
+              width: 24,
             ),
             splashRadius: 24,
           ),

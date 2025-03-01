@@ -5,21 +5,14 @@ class TabsController {
   final tabController = CupertinoTabController();
   final tabKey = GlobalKey();
   final List<NavPage> navPages = [
-    NavPage(
-      'Home',
-      'assets/icons/home.png',
-      'assets/icons/home.png',
-      GlobalKey<NavigatorState>(),
-    ),
+    NavPage('Home', 'assets/icons/home.png', GlobalKey<NavigatorState>()),
     NavPage(
       'Favourites',
-      'assets/icons/heart.png',
       'assets/icons/heart.png',
       GlobalKey<NavigatorState>(),
     ),
     NavPage(
       'Settings',
-      'assets/icons/settings.png',
       'assets/icons/settings.png',
       GlobalKey<NavigatorState>(),
     ),
