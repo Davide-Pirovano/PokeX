@@ -16,8 +16,7 @@ class PokemonCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-          context,
+        Navigator.of(context, rootNavigator: true).push(
           MaterialPageRoute(
             builder: (context) => PokemonDetailsPage(pokemon: pokemon),
           ),
@@ -40,11 +39,7 @@ class PokemonCard extends StatelessWidget {
                   pokemon.id! < 100
                       ? "#0${pokemon.id.toString()}"
                       : "#${pokemon.id}",
-                  style: TextStyle(
-                    fontSize: 25,
-                    color: ColorUtil().lightGrey,
-                    fontFamily: GoogleFonts.montserrat().fontFamily,
-                  ),
+                  style: TextStyle(fontSize: 25, color: ColorUtil().lightGrey),
                 ),
               ),
               Positioned(
@@ -60,10 +55,7 @@ class PokemonCard extends StatelessWidget {
                     getPokemonImage(id: pokemon.id!, dimensione: 100),
                     Text(
                       pokemon.name.capitalize(),
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontFamily: GoogleFonts.montserrat().fontFamily,
-                      ),
+                      style: TextStyle(fontSize: 20),
                     ),
                   ],
                 ),

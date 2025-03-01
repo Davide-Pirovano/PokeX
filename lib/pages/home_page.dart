@@ -4,8 +4,6 @@ import 'package:provider/provider.dart';
 
 import '../data/pokedex_data_source.dart';
 import '../widgets/pokemon_card.dart';
-import 'favourites_page.dart';
-import 'settings_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -50,26 +48,6 @@ class _HomePageState extends State<HomePage> {
         elevation: 0,
         backgroundColor: Colors.transparent,
         title: AppBarTitle(title: "Pokédex"),
-        actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const SettingsPage()),
-              );
-            },
-            icon: const Icon(Icons.settings),
-          ),
-          IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const FavouritesPage()),
-              );
-            },
-            icon: const Icon(Icons.favorite),
-          ),
-        ],
         titleSpacing: 0,
         toolbarHeight: 80,
       ),

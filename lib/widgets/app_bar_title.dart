@@ -9,14 +9,10 @@ class AppBarTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 24.0),
+      padding: const EdgeInsets.only(left: 16.0),
       child: Text(
         title,
-        style: TextStyle(
-          fontFamily: GoogleFonts.montserrat().fontFamily,
-          fontSize: 30,
-          fontWeight: FontWeight.bold,
-        ),
+        style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
       ),
     );
   }

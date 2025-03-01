@@ -66,10 +66,7 @@ class _PokemonDetailsPageState extends State<PokemonDetailsPage> {
                       children: [
                         Text(
                           widget.pokemon.name.capitalize(),
-                          style: TextStyle(
-                            fontSize: 30,
-                            fontFamily: GoogleFonts.montserrat().fontFamily,
-                          ),
+                          style: TextStyle(fontSize: 30),
                         ),
                         const SizedBox(width: 8),
                         Text(
@@ -79,7 +76,6 @@ class _PokemonDetailsPageState extends State<PokemonDetailsPage> {
                           style: TextStyle(
                             fontSize: 30,
                             color: ColorUtil().lightGrey,
-                            fontFamily: GoogleFonts.montserrat().fontFamily,
                           ),
                         ),
                       ],

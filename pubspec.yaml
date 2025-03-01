@@ -25,4 +25,10 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   
-  # assets:
+  assets:
+    - assets/icons/home.png
+    - assets/icons/home-outline.png
+    - assets/icons/heart.png
+    - assets/icons/heart-outline.png
+    - assets/icons/settings.png
+    - assets/icons/settings-outline.png

@@ -75,7 +75,6 @@ class TypesDetails extends StatelessWidget {
                     e.type.name.toUpperCase(),
                     style: TextStyle(
                       fontSize: 16,
-                      fontFamily: GoogleFonts.montserrat().fontFamily,
                       color:
                           Provider.of<ThemeProvider>(context).isDarkMode
                               ? Colors.white
@@ -105,7 +104,6 @@ class Details extends StatelessWidget {
             Text(
               "${formatToMeters(details.height!)} m",
               style: TextStyle(
-                fontFamily: GoogleFonts.montserrat().fontFamily,
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color:
@@ -123,7 +121,6 @@ class Details extends StatelessWidget {
             Text(
               "${formatToKg(details.weight!)} kg",
               style: TextStyle(
-                fontFamily: GoogleFonts.montserrat().fontFamily,
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color:
@@ -161,7 +158,6 @@ class EvolutionLine extends StatelessWidget {
             fontSize: 24,
             fontWeight: FontWeight.bold,
             color: colorType,
-            fontFamily: GoogleFonts.montserrat().fontFamily,
           ),
         ),
         const SizedBox(height: 8),
@@ -179,15 +175,11 @@ class EvolutionLine extends StatelessWidget {
                     children: [
                       Text(
                         "[${i + 1}]",
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontFamily: GoogleFonts.montserrat().fontFamily,
-                          fontSize: 16,
-                        ),
+                        style: TextStyle(color: Colors.grey, fontSize: 16),
                       ),
                       const SizedBox(width: 24),
                       for (var j = 0; j < evolution[i].length; j++) ...[
-                        getPokemonImage(id: evolution[i][j], dimensione: 80),
+                        getPokemonImage(id: evolution[i][j], dimensione: 65),
                         const SizedBox(width: 8),
                         if (j < evolution[i].length - 1)
                           Padding(
@@ -235,7 +227,6 @@ class Abilities extends StatelessWidget {
             fontSize: 24,
             fontWeight: FontWeight.bold,
             color: colorType,
-            fontFamily: GoogleFonts.montserrat().fontFamily,
           ),
         ),
         const SizedBox(height: 8),
@@ -252,7 +243,6 @@ class Abilities extends StatelessWidget {
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
-                    fontFamily: GoogleFonts.montserrat().fontFamily,
                   ),
                 ),
                 Text(
@@ -261,7 +251,6 @@ class Abilities extends StatelessWidget {
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
-                    fontFamily: GoogleFonts.montserrat().fontFamily,
                   ),
                 ),
               ],
@@ -278,7 +267,6 @@ class Abilities extends StatelessWidget {
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
-                      fontFamily: GoogleFonts.montserrat().fontFamily,
                     ),
                   ),
                   Text(
@@ -287,7 +275,6 @@ class Abilities extends StatelessWidget {
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
-                      fontFamily: GoogleFonts.montserrat().fontFamily,
                     ),
                   ),
                 ],
