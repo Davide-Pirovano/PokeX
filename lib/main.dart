@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:hive_ce_flutter/adapters.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../pages/tab_page/tabs_page.dart';
 import 'package:provider/provider.dart';
 
@@ -12,6 +14,15 @@ import 'util/pokemon_type.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Carica il file .env
+  await dotenv.load(fileName: ".env");
+
+  // Inizializza Supabase con le variabili dal file .env
+  await Supabase.initialize(
+    url: dotenv.env['SUPABASE_URL'] ?? 'test_url', // Leggi l'URL da .env
+    anonKey:
+        dotenv.env['SUPABASE_KEY'] ?? 'test_api_key', // Leggi la chiave da .env
+  );
   await Hive.initFlutter();
 
   Hive.registerAdapter(PokemonAdapter());

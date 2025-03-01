@@ -1,3 +1,6 @@
+# Private Keys
+.env
+
 # Miscellaneous
 *.class
 *.log
