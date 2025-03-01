@@ -1,5 +1,5 @@
 import 'package:hive_ce/hive.dart';
-import 'package:pokedex/util/pokemon_type.dart' as poketype_util;
+import '../util/pokemon_type.dart' as poketype_util;
 
 part 'pokemon.g.dart'; // flutter pub run build_runner build
 

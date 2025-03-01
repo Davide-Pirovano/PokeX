@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:pokedex/model/pokemon.dart';
-import 'package:pokedex/theme/theme_provider.dart';
-import 'package:pokedex/util/get_pokemon_image.dart';
-import 'package:pokedex/util/pokemon_type.dart';
+import '../model/pokemon.dart';
+import '../theme/theme_provider.dart';
+import '../util/get_pokemon_image.dart';
+import '../util/pokemon_type.dart';
 import 'package:provider/provider.dart';
 import '../util/utils.dart';
 

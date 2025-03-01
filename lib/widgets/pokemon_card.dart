@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:pokedex/model/pokemon.dart';
-import 'package:pokedex/util/color_util.dart';
-import 'package:pokedex/util/utils.dart';
-import 'package:pokedex/widgets/fav_selector.dart';
+import '../model/pokemon.dart';
+import '../util/color_util.dart';
+import '../util/utils.dart';
+import '../widgets/fav_selector.dart';
 import '../pages/pokemon_details_page.dart';
 import '../util/get_pokemon_image.dart';
 

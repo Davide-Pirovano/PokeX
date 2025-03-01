@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive_ce_flutter/adapters.dart';
-import 'package:pokedex/pages/tab_page/tabs_page.dart';
+import '../pages/tab_page/tabs_page.dart';
 import 'package:provider/provider.dart';
 
 import 'data/favourites_data_source.dart';

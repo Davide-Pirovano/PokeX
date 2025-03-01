@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pokedex/widgets/app_bar_title.dart';
+import '../widgets/app_bar_title.dart';
 import 'package:provider/provider.dart';
 
 import '../repo/favourite_repo.dart';
@@ -14,6 +14,9 @@ class FavouritesPage extends StatelessWidget {
       appBar: AppBar(title: AppBarTitle(title: "Favourites")),
       body: Consumer<FavouriteRepo>(
         builder: (context, favouriteRepo, child) {
+          if (favouriteRepo.favourites.isEmpty) {
+            return const Center(child: Text("No favourites"));
+          }
           return CustomScrollView(
             slivers: [
               SliverGrid(

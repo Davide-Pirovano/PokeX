@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pokedex/widgets/app_bar_title.dart';
+import '../widgets/app_bar_title.dart';
 import 'package:provider/provider.dart';
 import '../theme/theme_provider.dart';
 
