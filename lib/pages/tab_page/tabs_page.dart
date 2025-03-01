@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import '../../pages/favourites_page.dart';
 import '../../pages/home_page.dart';
 import '../../pages/settings_page.dart';
-import 'package:provider/provider.dart';
-import '../../theme/theme_provider.dart';
 import 'tabs_controller.dart';
 
 class TabsPage extends StatefulWidget {

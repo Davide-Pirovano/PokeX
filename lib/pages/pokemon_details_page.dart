@@ -34,17 +34,17 @@ class _PokemonDetailsPageState extends State<PokemonDetailsPage> {
             padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
             color: backgroundColor,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
               child: Column(
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       IconButton(
-                        icon: const Icon(
+                        icon: Icon(
                           Icons.arrow_back,
                           size: 32,
-                          color: Colors.black,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                         onPressed: () => Navigator.pop(context),
                         padding: EdgeInsets.zero,

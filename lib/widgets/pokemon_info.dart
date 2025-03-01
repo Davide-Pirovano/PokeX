@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import '../model/pokemon.dart';
-import '../theme/theme_provider.dart';
 import '../util/get_pokemon_image.dart';
 import '../util/pokemon_type.dart';
-import 'package:provider/provider.dart';
 import '../util/utils.dart';
 
 class PokemonInfo extends StatelessWidget {
@@ -56,10 +54,7 @@ class TypesDetails extends StatelessWidget {
                   ),
                   decoration: BoxDecoration(
                     border: Border.all(
-                      color:
-                          Provider.of<ThemeProvider>(context).isDarkMode
-                              ? Colors.white
-                              : Colors.black,
+                      color: Theme.of(context).colorScheme.primary,
                       width: 2,
                     ),
                     borderRadius: BorderRadius.circular(8),
@@ -71,10 +66,7 @@ class TypesDetails extends StatelessWidget {
                     e.type.name.toUpperCase(),
                     style: TextStyle(
                       fontSize: 16,
-                      color:
-                          Provider.of<ThemeProvider>(context).isDarkMode
-                              ? Colors.white
-                              : Colors.black,
+                      color: Theme.of(context).colorScheme.primary,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
