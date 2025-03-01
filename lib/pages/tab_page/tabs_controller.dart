@@ -7,20 +7,20 @@ class TabsController {
   final List<NavPage> navPages = [
     NavPage(
       'Home',
-      'assets/icons/home.png', // Path to filled home icon
-      'assets/icons/home-outline.png', // Path to outlined home icon
+      'assets/icons/home.png',
+      'assets/icons/home.png',
       GlobalKey<NavigatorState>(),
     ),
     NavPage(
       'Favourites',
-      'assets/icons/heart.png', // Path to filled favourites icon
-      'assets/icons/heart-outline.png', // Path to outlined favourites icon
+      'assets/icons/heart.png',
+      'assets/icons/heart.png',
       GlobalKey<NavigatorState>(),
     ),
     NavPage(
       'Settings',
-      'assets/icons/settings.png', // Path to filled settings icon
-      'assets/icons/settings-outline.png', // Path to outlined settings icon
+      'assets/icons/settings.png',
+      'assets/icons/settings.png',
       GlobalKey<NavigatorState>(),
     ),
   ];
@@ -38,7 +38,15 @@ class TabsController {
   void popTab({required bool didPop}) {
     if (!didPop) {
       final currentTab = navPages[tabController.index];
-      currentTab.key.currentState?.pop();
+      final navigatorState = currentTab.key.currentState;
+      if (navigatorState != null && navigatorState.canPop()) {
+        // Pop solo se ci sono elementi nello stack
+        navigatorState.pop();
+      }
+      // Opzionale: Aggiungi un comportamento fallback se lo stack è vuoto
+      // else {
+      //   Navigator.of(navigatorState!.context, rootNavigator: true).pop(); // Esce dall'app, se desiderato
+      // }
     }
   }
 

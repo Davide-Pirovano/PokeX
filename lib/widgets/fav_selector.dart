@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../model/pokemon.dart';
 import '../repo/favourite_repo.dart';
-import '../util/color_util.dart';
 
 class FavSelector extends StatelessWidget {
   const FavSelector({super.key, required this.pokemon});
 
   final Pokemon pokemon;
+
+  static const String heartIcon = 'assets/icons/heart.png';
+  static const String heartFullIcon = 'assets/icons/heart-full.png';
 
   @override
   Widget build(BuildContext context) {
@@ -26,18 +27,11 @@ class FavSelector extends StatelessWidget {
                     isFav
                         ? favouriteRepo.removeFavourite(pokemon.id!)
                         : favouriteRepo.addFavourite(pokemon),
-            icon:
-                isFav
-                    ? Icon(
-                      Icons.favorite,
-                      color: ColorUtil().favouriteRed,
-                      size: 32,
-                    )
-                    : const Icon(
-                      Icons.favorite_outline,
-                      color: Colors.black,
-                      size: 32,
-                    ),
+            icon: Image.asset(
+              isFav ? heartFullIcon : heartIcon,
+              height: 32, // Dimensione coerente con il tuo design
+              width: 32,
+            ),
             splashRadius: 24,
           ),
         );

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:pokex/util/color_util.dart';
 import '../../pages/favourites_page.dart';
 import '../../pages/home_page.dart';
 import '../../pages/settings_page.dart';
@@ -21,9 +22,7 @@ class _TabsPageState extends State<TabsPage> {
   void initState() {
     super.initState();
     ctrl.tabController.addListener(() {
-      if (mounted) {
-        setState(() {});
-      }
+      if (mounted) setState(() {});
     });
   }
 
@@ -39,8 +38,10 @@ class _TabsPageState extends State<TabsPage> {
     final activeColor = isDarkMode ? Colors.white : Colors.black;
 
     return PopScope(
-      canPop: false,
-      onPopInvokedWithResult: (didPop, _) => ctrl.popTab(didPop: didPop),
+      canPop: false, // Impedisce il pop del root navigator
+      onPopInvokedWithResult: (didPop, _) {
+        ctrl.popTab(didPop: didPop); // Gestisce il pop della tab corrente
+      },
       child: CupertinoTabScaffold(
         controller: ctrl.tabController,
         tabBar: CupertinoTabBar(
@@ -57,12 +58,14 @@ class _TabsPageState extends State<TabsPage> {
                     ctrl.tabController.index == ctrl.navPages.indexOf(p);
                 return BottomNavigationBarItem(
                   icon: SizedBox(
-                    height: 60, // Match the tab bar height
+                    height: 60,
                     child: Center(
                       child: Image.asset(
-                        isActive ? p.icon : p.iconOutlined,
-                        height: 32, // Size of the icon
+                        p.icon,
+                        height: 32,
                         width: 32,
+                        color:
+                            isActive ? ColorUtil().favouriteRed : Colors.grey,
                       ),
                     ),
                   ),
