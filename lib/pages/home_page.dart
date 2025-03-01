@@ -28,7 +28,7 @@ class _HomePageState extends State<HomePage> {
 
   void _scrollListener() {
     if (_scrollController.position.pixels >=
-        _scrollController.position.maxScrollExtent * 0.6) {
+        _scrollController.position.maxScrollExtent * 0.75) {
       Provider.of<PokedexDataSource>(context, listen: false).fetchPokedex();
     }
   }
