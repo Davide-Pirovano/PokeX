@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 Widget getPokemonImage({double? dimensione, required int id}) {
   dimensione ??= 40;
   final imageUrl =
-      'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/$id.png';
-  //'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/$id.png';
+      //'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/$id.png';
+      'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/$id.png';
 
   return Image.network(
     imageUrl,

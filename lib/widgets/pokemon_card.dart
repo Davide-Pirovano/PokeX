@@ -41,11 +41,6 @@ class PokemonCard extends StatelessWidget {
                   style: TextStyle(fontSize: 25, color: ColorUtil().lightGrey),
                 ),
               ),
-              Positioned(
-                top: 8,
-                right: 8,
-                child: FavSelector(pokemon: pokemon),
-              ),
               Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -59,6 +54,11 @@ class PokemonCard extends StatelessWidget {
                     ),
                   ],
                 ),
+              ),
+              Positioned(
+                top: 8,
+                right: 8,
+                child: FavSelector(pokemon: pokemon),
               ),
             ],
           ),

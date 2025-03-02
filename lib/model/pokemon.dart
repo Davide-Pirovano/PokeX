@@ -33,7 +33,7 @@ class Pokemon extends HiveObject {
   poketype_util.PokemonType? primaryType;
 
   @HiveField(9)
-  List<List<int>>? evolutionChainIds; // Cambiato in List<List<int>>
+  List<List<int>>? evolutionChainIds;
 
   Pokemon({
     this.id,
@@ -68,9 +68,9 @@ class Pokemon extends HiveObject {
       );
     }
 
-    Pokemon pokemon = Pokemon(
+    final pokemon = Pokemon(
       id: json["id"],
-      name: json["name"],
+      name: json["name"].split("-").first, // Split qui per i dettagli
       height: json["height"],
       weight: json["weight"],
       types: typesList,
@@ -89,12 +89,15 @@ class Pokemon extends HiveObject {
   }
 
   factory Pokemon.fromListResult(Map<String, dynamic> json) {
-    return Pokemon(name: json["name"], url: json["url"]);
+    return Pokemon(
+      name: json["name"].split("-").first, // Split qui per i dati base
+      url: json["url"],
+    );
   }
 
   Map<String, dynamic> toJson() => {
     "id": id,
-    "name": name,
+    "name": name, // Nessun split qui, il nome è già corretto
     "height": height,
     "weight": weight,
     "types": types.map((type) => type.toJson()).toList(),

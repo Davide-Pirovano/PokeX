@@ -70,17 +70,15 @@ class PokedexDataSource extends ChangeNotifier {
       final response = await http.get(Uri.parse(basicPokemon.url));
       if (response.statusCode == 200) {
         final json = jsonDecode(response.body);
-        // Crea un Pokémon con dati base compatibili con il tuo modello
         final typesList = List<TypeEntry>.from(
           json['types'].map((x) => TypeEntry.fromJson(x)),
         );
         final pokemon = Pokemon(
           id: json['id'],
-          name: json['name'],
+          name: json['name'].split("-").first, // Split qui per i dati base
           url: basicPokemon.url,
           types: typesList,
         );
-        // Imposta il primaryType se ci sono tipi
         if (typesList.isNotEmpty) {
           pokemon.primaryType = getPokemonTypeFromString(
             typesList.first.type.name.toUpperCase(),
@@ -109,7 +107,6 @@ class PokedexDataSource extends ChangeNotifier {
         final json = jsonDecode(response.body);
         Pokemon updatedPokemon = Pokemon.fromJson(json);
 
-        // Fetch evolution chain se disponibile
         if (updatedPokemon.species != null &&
             updatedPokemon.species!.url.isNotEmpty) {
           final evolutionChains = await _getPokemonEvolutionChain(
@@ -121,7 +118,6 @@ class PokedexDataSource extends ChangeNotifier {
           log('Nessuna specie trovata per $pokemonName');
         }
 
-        // Aggiorna il Pokémon nella lista
         _pokedex.results[index] = updatedPokemon;
         log('Dettagli aggiornati per $pokemonName: ${updatedPokemon.toJson()}');
         notifyListeners();
