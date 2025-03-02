@@ -4,17 +4,16 @@ import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import '../model/pokedex.dart';
 import '../model/pokemon.dart';
+import '../util/pokemon_type.dart';
 
 class PokedexDataSource extends ChangeNotifier {
   static final PokedexDataSource _instance = PokedexDataSource._internal();
 
-  factory PokedexDataSource() {
-    return _instance;
-  }
+  factory PokedexDataSource() => _instance;
 
   PokedexDataSource._internal();
 
-  static const int limit = 20; // Ridotto da 40 a 20 come suggerito
+  static const int limit = 20;
   int offset = 0;
 
   static const String _baseUrl = 'https://pokeapi.co/api/v2/pokemon/';
@@ -26,47 +25,33 @@ class PokedexDataSource extends ChangeNotifier {
   bool hasNext = true;
 
   Future<void> fetchPokedex() async {
-    if (isLoading || !hasNext) {
-      return; // Avoid multiple calls during loading
-    }
+    if (isLoading || !hasNext) return;
 
     isLoading = true;
-    notifyListeners(); // Notify loading state
+    notifyListeners();
 
     final uri = Uri.parse('$_baseUrl?limit=$limit&offset=$offset');
 
     try {
       final response = await http.get(uri);
-
       if (response.statusCode == 200) {
-        // Parse the basic list response
         final json = jsonDecode(response.body);
         final basicPokedex = Pokedex.fromJson(json);
 
-        // Update pagination data
+        // Fetch basic details in parallel
+        final basicResults = await Future.wait(
+          basicPokedex.results.map(
+            (basicPokemon) => _fetchBasicPokemonDetails(basicPokemon),
+          ),
+        );
+
         _pokedex = Pokedex(
           count: basicPokedex.count,
           next: basicPokedex.next,
           previous: basicPokedex.previous,
-          results: [..._pokedex.results], // Keep existing results
+          results: [..._pokedex.results, ...basicResults],
         );
 
-        // Fetch detailed data for each Pokemon in parallel
-        final detailedResults = await Future.wait(
-          basicPokedex.results.map(
-            (basicPokemon) => _fetchPokemonDetails(basicPokemon),
-          ),
-        );
-
-        // Add new results to existing results
-        _pokedex = Pokedex(
-          count: _pokedex.count,
-          next: _pokedex.next,
-          previous: _pokedex.previous,
-          results: [..._pokedex.results, ...detailedResults],
-        );
-
-        // Update for next page
         offset += limit;
         hasNext = _pokedex.next != null;
       } else {
@@ -76,47 +61,83 @@ class PokedexDataSource extends ChangeNotifier {
       log('Error during fetch: $e');
     } finally {
       isLoading = false;
-      notifyListeners(); // Notify that data is ready or there was an error
+      notifyListeners();
     }
   }
 
-  Future<Pokemon> _fetchPokemonDetails(Pokemon basicPokemon) async {
+  Future<Pokemon> _fetchBasicPokemonDetails(Pokemon basicPokemon) async {
     try {
-      // Parallelize fetching Pokémon data and species/evolution chain data
-      final pokemonDataFuture = _getPokemonData(Uri.parse(basicPokemon.url));
-      final detailedPokemon = await pokemonDataFuture;
-
-      // Fetch evolution chain only if species exists
-      if (detailedPokemon.species != null) {
-        final evolutionChainsFuture = _getPokemonEvolutionChain(
-          detailedPokemon.species!.url,
+      final response = await http.get(Uri.parse(basicPokemon.url));
+      if (response.statusCode == 200) {
+        final json = jsonDecode(response.body);
+        // Crea un Pokémon con dati base compatibili con il tuo modello
+        final typesList = List<TypeEntry>.from(
+          json['types'].map((x) => TypeEntry.fromJson(x)),
         );
-        detailedPokemon.evolutionChainIds = await evolutionChainsFuture;
+        final pokemon = Pokemon(
+          id: json['id'],
+          name: json['name'],
+          url: basicPokemon.url,
+          types: typesList,
+        );
+        // Imposta il primaryType se ci sono tipi
+        if (typesList.isNotEmpty) {
+          pokemon.primaryType = getPokemonTypeFromString(
+            typesList.first.type.name.toUpperCase(),
+          );
+        }
+        return pokemon;
       }
-
-      return detailedPokemon;
+      return basicPokemon;
     } catch (e) {
-      log('Error fetching details for ${basicPokemon.name}: $e');
-      return basicPokemon; // Return basic data if detailed fetch fails
+      log('Error fetching basic details for ${basicPokemon.name}: $e');
+      return basicPokemon;
     }
   }
 
-  Future<Pokemon> _getPokemonData(Uri url) async {
-    final response = await http.get(url);
-    if (response.statusCode == 200) {
-      final json = jsonDecode(response.body);
-      return Pokemon.fromJson(json);
-    } else {
-      throw Exception('Error loading Pokémon data');
+  Future<void> fetchPokemonDetails(String pokemonName) async {
+    final index = _pokedex.results.indexWhere((p) => p.name == pokemonName);
+    if (index == -1) {
+      log('Pokémon $pokemonName non trovato nella lista');
+      return;
+    }
+
+    final pokemon = _pokedex.results[index];
+    try {
+      final response = await http.get(Uri.parse(pokemon.url));
+      if (response.statusCode == 200) {
+        final json = jsonDecode(response.body);
+        Pokemon updatedPokemon = Pokemon.fromJson(json);
+
+        // Fetch evolution chain se disponibile
+        if (updatedPokemon.species != null &&
+            updatedPokemon.species!.url.isNotEmpty) {
+          final evolutionChains = await _getPokemonEvolutionChain(
+            updatedPokemon.species!.url,
+          );
+          updatedPokemon.evolutionChainIds = evolutionChains;
+          log('Evolution chain caricata per $pokemonName: $evolutionChains');
+        } else {
+          log('Nessuna specie trovata per $pokemonName');
+        }
+
+        // Aggiorna il Pokémon nella lista
+        _pokedex.results[index] = updatedPokemon;
+        log('Dettagli aggiornati per $pokemonName: ${updatedPokemon.toJson()}');
+        notifyListeners();
+      } else {
+        throw Exception(
+          'Error fetching details for $pokemonName: ${response.statusCode}',
+        );
+      }
+    } catch (e) {
+      log('Error fetching details for $pokemonName: $e');
     }
   }
 
   Future<List<List<int>>> _getPokemonEvolutionChain(String speciesUrl) async {
     try {
-      // Parallelize species and evolution chain requests
-      final speciesResponseFuture = http.get(Uri.parse(speciesUrl));
-      final speciesResponse = await speciesResponseFuture;
-
+      final speciesResponse = await http.get(Uri.parse(speciesUrl));
       if (speciesResponse.statusCode != 200) {
         throw Exception('Error loading Pokémon species data');
       }
@@ -124,9 +145,7 @@ class PokedexDataSource extends ChangeNotifier {
       final speciesJson = jsonDecode(speciesResponse.body);
       final evolutionChainUrl = speciesJson['evolution_chain']['url'];
 
-      final evolutionResponseFuture = http.get(Uri.parse(evolutionChainUrl));
-      final evolutionResponse = await evolutionResponseFuture;
-
+      final evolutionResponse = await http.get(Uri.parse(evolutionChainUrl));
       if (evolutionResponse.statusCode != 200) {
         throw Exception('Error loading evolution chain data');
       }
@@ -142,13 +161,11 @@ class PokedexDataSource extends ChangeNotifier {
   List<List<int>> _extractEvolutionChain(Map<String, dynamic> chain) {
     List<List<int>> evolutionChains = [];
 
-    // Helper function to extract ID from URL
     int extractId(String url) {
       final parts = url.split('/');
       return int.parse(parts[parts.length - 2]);
     }
 
-    // Function to recursively build evolution chains
     void buildChains(Map<String, dynamic> currentChain, List<int> currentPath) {
       currentPath.add(extractId(currentChain['species']['url']));
 

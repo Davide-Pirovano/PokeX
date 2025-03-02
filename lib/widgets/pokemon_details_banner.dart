@@ -11,7 +11,7 @@ class PokemonDetailsBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipPath(
-      clipper: InwardCurveClipper(), // Applica il ritaglio con la curva
+      clipper: InwardCurveClipper(),
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(

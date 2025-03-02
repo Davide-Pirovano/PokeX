@@ -11,8 +11,18 @@ class PokemonInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Se i dati dettagliati non sono ancora caricati, mostra un indicatore di caricamento
+    if (pokemon.height == null ||
+        pokemon.weight == null ||
+        pokemon.evolutionChainIds == null) {
+      return const Padding(
+        padding: EdgeInsets.all(40),
+        child: Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return Padding(
-      padding: EdgeInsets.only(top: 40, bottom: 40),
+      padding: const EdgeInsets.only(top: 40, bottom: 40),
       child: Column(
         children: [
           TypesDetails(type: pokemon.types),
@@ -21,12 +31,12 @@ class PokemonInfo extends StatelessWidget {
           const SizedBox(height: 24),
           EvolutionLine(
             evolution: pokemon.evolutionChainIds!,
-            colorType: pokemon.primaryType!.color,
+            colorType: pokemon.primaryType?.color ?? Colors.grey,
           ),
           const SizedBox(height: 24),
           Abilities(
             abilities: pokemon.abilities,
-            colorType: pokemon.primaryType!.color,
+            colorType: pokemon.primaryType?.color ?? Colors.grey,
           ),
         ],
       ),
@@ -47,7 +57,7 @@ class TypesDetails extends StatelessWidget {
           type
               .map(
                 (e) => Container(
-                  margin: EdgeInsets.symmetric(horizontal: 8),
+                  margin: const EdgeInsets.symmetric(horizontal: 8),
                   padding: const EdgeInsets.symmetric(
                     horizontal: 8,
                     vertical: 4,
@@ -101,7 +111,7 @@ class Details extends StatelessWidget {
                     Colors.white,
               ),
             ),
-            Text("Height"),
+            const Text("Height"),
           ],
         ),
         Column(
@@ -118,7 +128,7 @@ class Details extends StatelessWidget {
                     Colors.white,
               ),
             ),
-            Text("Weight"),
+            const Text("Weight"),
           ],
         ),
       ],
@@ -152,30 +162,30 @@ class EvolutionLine extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 32.0),
           child: SingleChildScrollView(
-            scrollDirection:
-                Axis.horizontal, // Abilita lo scorrimento orizzontale
+            scrollDirection: Axis.horizontal,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 for (var i = 0; i < evolution.length; i++) ...[
-                  // Pokemon column
                   Row(
                     children: [
                       Text(
                         "[${i + 1}]",
-                        style: TextStyle(color: Colors.grey, fontSize: 16),
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 16,
+                        ),
                       ),
                       const SizedBox(width: 24),
                       for (var j = 0; j < evolution[i].length; j++) ...[
                         getPokemonImage(id: evolution[i][j], dimensione: 55),
                         const SizedBox(width: 8),
                         if (j < evolution[i].length - 1)
-                          Icon(Icons.arrow_forward, color: Colors.grey),
+                          const Icon(Icons.arrow_forward, color: Colors.grey),
                       ],
                     ],
                   ),
-
-                  const SizedBox(width: 8),
+                  const SizedBox(height: 8),
                 ],
               ],
             ),
@@ -194,7 +204,6 @@ class Abilities extends StatelessWidget {
   });
 
   final Color colorType;
-
   final List<Ability> abilities;
 
   @override
@@ -213,30 +222,30 @@ class Abilities extends StatelessWidget {
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Text(
-                  "First Ability",
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.primary,
+            if (abilities.isNotEmpty) ...[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Text(
+                    "First Ability",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
                   ),
-                ),
-                Text(
-                  abilities[0].name.capitalize(),
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.primary,
+                  Text(
+                    abilities[0].name.capitalize(),
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
                   ),
-                ),
-              ],
-            ),
-
-            if (abilities.length > 1) ...{
+                ],
+              ),
+            ],
+            if (abilities.length > 1) ...[
               const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -259,7 +268,7 @@ class Abilities extends StatelessWidget {
                   ),
                 ],
               ),
-            },
+            ],
           ],
         ),
       ],

@@ -1,7 +1,7 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import '../widgets/app_bar_title.dart';
 import 'package:provider/provider.dart';
-
 import '../data/pokedex_data_source.dart';
 import '../widgets/pokemon_card.dart';
 
@@ -14,30 +14,41 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final ScrollController _scrollController = ScrollController();
+  Timer? _debounce;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<PokedexDataSource>(context, listen: false).fetchPokedex();
+      final dataSource = Provider.of<PokedexDataSource>(context, listen: false);
+      if (dataSource.pokedex.results.isEmpty) {
+        dataSource.fetchPokedex();
+      }
     });
-
-    // Aggiungi il listener per il ScrollController
     _scrollController.addListener(_scrollListener);
   }
 
   void _scrollListener() {
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent * 0.75) {
-      Provider.of<PokedexDataSource>(context, listen: false).fetchPokedex();
+      if (_debounce?.isActive ?? false) _debounce!.cancel();
+      _debounce = Timer(const Duration(milliseconds: 300), () {
+        final dataSource = Provider.of<PokedexDataSource>(
+          context,
+          listen: false,
+        );
+        if (!dataSource.isLoading && dataSource.hasNext) {
+          dataSource.fetchPokedex();
+        }
+      });
     }
   }
 
   @override
   void dispose() {
-    // Rimuovi il listener e disponi dello ScrollController quando il widget viene distrutto
     _scrollController.removeListener(_scrollListener);
     _scrollController.dispose();
+    _debounce?.cancel();
     super.dispose();
   }
 
@@ -47,47 +58,44 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.transparent,
-        title: AppBarTitle(title: "Pokédex"),
+        title: const AppBarTitle(title: "Pokédex"),
       ),
       body: Consumer<PokedexDataSource>(
         builder: (context, dataSource, child) {
-          // Verifica se i dati sono stati caricati
+          // Stato iniziale: caricamento o errore
           if (dataSource.pokedex.results.isEmpty) {
-            return const Center(child: CircularProgressIndicator());
+            if (dataSource.isLoading) {
+              return const Center(child: CircularProgressIndicator());
+            } else {
+              return const Center(
+                child: Text('Nessun dato disponibile. Riprova più tardi.'),
+              );
+            }
           }
 
-          // Mostra la lista dei Pokemon
+          // Lista caricata
           return SafeArea(
-            child: Column(
-              children: [
-                Expanded(
-                  child: CustomScrollView(
-                    controller: _scrollController,
-                    slivers: [
-                      SliverGrid(
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              childAspectRatio: 1,
-                            ),
-                        delegate: SliverChildBuilderDelegate(
-                          (context, index) => PokemonCard(
-                            pokemon: dataSource.pokedex.results[index],
-                          ),
-                          childCount: dataSource.pokedex.results.length,
-                        ),
-                      ),
-                      if (dataSource.isLoading)
-                        SliverToBoxAdapter(
-                          child: Container(
-                            padding: const EdgeInsets.all(16.0),
-                            alignment: Alignment.center,
-                            child: const CircularProgressIndicator(),
-                          ),
-                        ),
-                    ],
+            child: CustomScrollView(
+              controller: _scrollController,
+              slivers: [
+                SliverGrid(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    childAspectRatio: 1,
+                  ),
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) =>
+                        PokemonCard(pokemon: dataSource.pokedex.results[index]),
+                    childCount: dataSource.pokedex.results.length,
                   ),
                 ),
+                if (dataSource.isLoading)
+                  const SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Center(child: CircularProgressIndicator()),
+                    ),
+                  ),
               ],
             ),
           );
