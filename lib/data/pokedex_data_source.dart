@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
+import 'package:pokex/repo/favourite_repo.dart';
+import 'package:provider/provider.dart';
 import '../model/pokedex.dart';
 import '../model/pokemon.dart';
 import '../util/pokemon_type.dart';
@@ -93,14 +95,36 @@ class PokedexDataSource extends ChangeNotifier {
     }
   }
 
-  Future<void> fetchPokemonDetails(String pokemonName) async {
-    final index = _pokedex.results.indexWhere((p) => p.name == pokemonName);
-    if (index == -1) {
-      log('Pokémon $pokemonName non trovato nella lista');
+  Future<void> fetchPokemonDetails(
+    String pokemonName,
+    BuildContext context,
+  ) async {
+    final pokedexDataSource = Provider.of<PokedexDataSource>(
+      context,
+      listen: false,
+    );
+    final favouriteRepo = Provider.of<FavouriteRepo>(context, listen: false);
+
+    int pokedexIndex = pokedexDataSource.pokedex.results.indexWhere(
+      (p) => p.name == pokemonName,
+    );
+    int favouriteIndex = favouriteRepo.favourites.indexWhere(
+      (p) => p.name == pokemonName,
+    );
+
+    Pokemon pokemon;
+    bool isFromPokedex = false;
+
+    if (pokedexIndex != -1) {
+      pokemon = pokedexDataSource.pokedex.results[pokedexIndex];
+      isFromPokedex = true;
+    } else if (favouriteIndex != -1) {
+      pokemon = favouriteRepo.favourites[favouriteIndex];
+    } else {
+      log('Pokémon $pokemonName non trovato né nel Pokédex né nei preferiti');
       return;
     }
 
-    final pokemon = _pokedex.results[index];
     try {
       final response = await http.get(Uri.parse(pokemon.url));
       if (response.statusCode == 200) {
@@ -118,9 +142,21 @@ class PokedexDataSource extends ChangeNotifier {
           log('Nessuna specie trovata per $pokemonName');
         }
 
-        _pokedex.results[index] = updatedPokemon;
-        log('Dettagli aggiornati per $pokemonName: ${updatedPokemon.toJson()}');
-        notifyListeners();
+        if (isFromPokedex) {
+          pokedexDataSource.pokedex.results[pokedexIndex] = updatedPokemon;
+          pokedexDataSource.notifyListeners();
+          log(
+            'Dettagli aggiornati nel Pokédex per $pokemonName: ${updatedPokemon.toJson()}',
+          );
+        }
+        if (favouriteIndex != -1) {
+          await favouriteRepo.updateFavourite(
+            updatedPokemon,
+          ); // Aggiorna invece di aggiungere
+          log(
+            'Dettagli aggiornati nei preferiti per $pokemonName: ${updatedPokemon.toJson()}',
+          );
+        }
       } else {
         throw Exception(
           'Error fetching details for $pokemonName: ${response.statusCode}',

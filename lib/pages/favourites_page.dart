@@ -5,8 +5,18 @@ import 'package:provider/provider.dart';
 import '../repo/favourite_repo.dart';
 import '../widgets/pokemon_card.dart';
 
-class FavouritesPage extends StatelessWidget {
+class FavouritesPage extends StatefulWidget {
   const FavouritesPage({super.key});
+
+  @override
+  State<FavouritesPage> createState() => _FavouritesPageState();
+}
+
+class _FavouritesPageState extends State<FavouritesPage> {
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

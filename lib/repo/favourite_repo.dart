@@ -40,4 +40,17 @@ class FavouriteRepo extends ChangeNotifier {
     // Controlla direttamente nella lista preferiti locale
     return favourites.any((pokemon) => pokemon.id == id);
   }
+
+  Future<void> updateFavourite(Pokemon updatedPokemon) async {
+    final index = favourites.indexWhere((p) => p.id == updatedPokemon.id);
+    if (index != -1) {
+      // Aggiorna nella lista locale
+      favourites[index] = updatedPokemon;
+      // Sincronizza con il database
+      await _favouritesDataSource.addFavourite(
+        updatedPokemon,
+      ); // Usa addFavourite che sovrascrive
+      notifyListeners();
+    }
+  }
 }

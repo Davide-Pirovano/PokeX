@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:pokex/widgets/pokemon_details_banner.dart';
 import 'package:provider/provider.dart';
 import '../data/pokedex_data_source.dart';
 import '../model/pokemon.dart';
+import '../repo/favourite_repo.dart';
 import '../util/color_util.dart';
 import '../util/get_pokemon_image.dart';
 import '../util/utils.dart';
 import '../widgets/fav_selector.dart';
-import '../widgets/pokemon_details_banner.dart';
 
 class PokemonDetailsPage extends StatefulWidget {
   const PokemonDetailsPage({super.key, required this.pokemon});
@@ -23,20 +24,37 @@ class _PokemonDetailsPageState extends State<PokemonDetailsPage> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final dataSource = Provider.of<PokedexDataSource>(context, listen: false);
-      // Carica i dettagli solo se non sono già completi
-      if (widget.pokemon.height == null || widget.pokemon.weight == null) {
-        dataSource.fetchPokemonDetails(widget.pokemon.name);
+      // Controlla se mancano dettagli critici
+      if (widget.pokemon.height == null ||
+          widget.pokemon.weight == null ||
+          widget.pokemon.evolutionChainIds == null) {
+        dataSource.fetchPokemonDetails(widget.pokemon.name, context).catchError(
+          (e) {
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Errore nel caricamento dei dettagli: $e'),
+                ),
+              );
+            }
+          },
+        );
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<PokedexDataSource>(
-      builder: (context, dataSource, child) {
-        // Trova il Pokémon aggiornato nella lista
+    return Consumer2<PokedexDataSource, FavouriteRepo>(
+      builder: (context, dataSource, favouriteRepo, child) {
+        // Trova il Pokémon aggiornato
         final updatedPokemon = dataSource.pokedex.results.firstWhere(
           (p) => p.name == widget.pokemon.name,
+          orElse:
+              () => favouriteRepo.favourites.firstWhere(
+                (p) => p.name == widget.pokemon.name,
+                orElse: () => widget.pokemon,
+              ),
         );
         final backgroundColor =
             updatedPokemon.primaryType?.color ?? Colors.white;
@@ -45,7 +63,6 @@ class _PokemonDetailsPageState extends State<PokemonDetailsPage> {
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           body: Column(
             children: [
-              /// **AppBar fissa**
               Container(
                 padding: EdgeInsets.only(
                   top: MediaQuery.of(context).padding.top,
@@ -101,8 +118,6 @@ class _PokemonDetailsPageState extends State<PokemonDetailsPage> {
                   ),
                 ),
               ),
-
-              /// **Tutto il resto scorre**
               Expanded(
                 child: SingleChildScrollView(
                   physics: const ClampingScrollPhysics(),
