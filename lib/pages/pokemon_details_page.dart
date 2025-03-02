@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pokex/widgets/pokemon_details_banner.dart';
 import 'package:provider/provider.dart';
-import '../data/pokedex_data_source.dart';
+import '../data/remote/pokedex_data_source.dart';
 import '../model/pokemon.dart';
 import '../repo/favourite_repo.dart';
 import '../util/color_util.dart';

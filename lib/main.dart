@@ -5,8 +5,8 @@ import 'package:pokex/pages/auth/auth_gate.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:provider/provider.dart';
 
-import 'data/favourites_data_source.dart';
-import 'data/pokedex_data_source.dart';
+import 'data/local/favourites_local_data_source.dart';
+import 'data/remote/pokedex_data_source.dart';
 import 'model/pokemon.dart';
 import 'repo/favourite_repo.dart';
 import 'theme/theme_provider.dart';
@@ -32,7 +32,7 @@ void main() async {
   Hive.registerAdapter(AbilityAdapter());
   Hive.registerAdapter(PokemonTypeAdapter());
 
-  FavouritesDataSource favourites = FavouritesDataSource();
+  FavouritesLocalDataSource favourites = FavouritesLocalDataSource();
   await favourites.init();
 
   runApp(

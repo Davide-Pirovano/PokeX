@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import '../widgets/app_bar_title.dart';
 import 'package:provider/provider.dart';
-import '../data/pokedex_data_source.dart';
+import '../data/remote/pokedex_data_source.dart';
 import '../widgets/pokemon_card.dart';
 
 class HomePage extends StatefulWidget {

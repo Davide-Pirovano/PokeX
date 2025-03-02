@@ -1,7 +1,7 @@
 import 'package:hive_ce/hive.dart';
-import '../model/pokemon.dart';
+import '../../model/pokemon.dart';
 
-class FavouritesDataSource {
+class FavouritesLocalDataSource {
   static const String _boxName = "favouritesBox";
 
   /// **Inizializza Hive e apre il box dei preferiti**

@@ -1,4 +1,4 @@
-import 'package:pokex/data/auth_data_source.dart';
+import 'package:pokex/data/remote/auth_data_source.dart';
 
 class AuthRepo {
   final AuthDataSource _authDataSource = AuthDataSource();

@@ -4,9 +4,9 @@ import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:pokex/repo/favourite_repo.dart';
 import 'package:provider/provider.dart';
-import '../model/pokedex.dart';
-import '../model/pokemon.dart';
-import '../util/pokemon_type.dart';
+import '../../model/pokedex.dart';
+import '../../model/pokemon.dart';
+import '../../util/pokemon_type.dart';
 
 class PokedexDataSource extends ChangeNotifier {
   static final PokedexDataSource _instance = PokedexDataSource._internal();
@@ -213,5 +213,42 @@ class PokedexDataSource extends ChangeNotifier {
 
     buildChains(chain, []);
     return evolutionChains;
+  }
+
+  Future<Pokemon> getBasicPokemonById(int id) async {
+    try {
+      // Costruisci l'URL usando l'ID
+      final url = '$_baseUrl$id/';
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        final json = jsonDecode(response.body);
+        // Crea un oggetto Pokémon con i basic details
+        final typesList = List<TypeEntry>.from(
+          json['types'].map((x) => TypeEntry.fromJson(x)),
+        );
+        final pokemon = Pokemon(
+          id: json['id'],
+          name: json['name'].split("-").first, // Normalizza il nome
+          url: url, // Usa l'URL appena costruito
+          types: typesList,
+        );
+        // Imposta il primaryType se ci sono tipi
+        if (typesList.isNotEmpty) {
+          pokemon.primaryType = getPokemonTypeFromString(
+            typesList.first.type.name.toUpperCase(),
+          );
+        }
+        return pokemon;
+      } else {
+        throw Exception(
+          'Errore nel caricamento del Pokémon $id: ${response.statusCode}',
+        );
+      }
+    } catch (e) {
+      log('Errore fetching basic details per ID $id: $e');
+      // Restituisci un Pokémon "vuoto" come fallback
+      return Pokemon(id: id, name: 'Sconosciuto', url: '');
+    }
   }
 }
