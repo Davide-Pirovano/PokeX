@@ -1,6 +1,6 @@
 name: pokex
 description: "PokeX"
-publish_to: 'none'
+publish_to: "none"
 version: 0.1.0
 
 environment:
@@ -27,7 +27,7 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-  
+
   assets:
     - assets/icons/home.png
     - assets/icons/heart.png
@@ -38,8 +38,7 @@ flutter:
 
     - .env
 
-
-flutter_launcher_icons:
+flutter_launcher_icons: # command : dart run flutter_launcher_icons:generate
   android: "launcher_icon"
   ios: true
   image_path: "assets/icons/logo.png"
