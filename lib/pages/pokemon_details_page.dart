@@ -18,8 +18,6 @@ class PokemonDetailsPage extends StatefulWidget {
 }
 
 class _PokemonDetailsPageState extends State<PokemonDetailsPage> {
-  bool _isFetchingDetails = false;
-
   @override
   void initState() {
     super.initState();
@@ -27,10 +25,7 @@ class _PokemonDetailsPageState extends State<PokemonDetailsPage> {
       final dataSource = Provider.of<PokedexDataSource>(context, listen: false);
       // Carica i dettagli solo se non sono già completi
       if (widget.pokemon.height == null || widget.pokemon.weight == null) {
-        setState(() => _isFetchingDetails = true);
-        dataSource.fetchPokemonDetails(widget.pokemon.name).then((_) {
-          if (mounted) setState(() => _isFetchingDetails = false);
-        });
+        dataSource.fetchPokemonDetails(widget.pokemon.name);
       }
     });
   }
